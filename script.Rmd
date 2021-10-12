@@ -113,26 +113,34 @@ pokedex_Update_05_20_ %>% str()
 - Explain how you dealt with data issues (if any), e.g. missing data and outliers.
 - Here are the examples of R chunks and outputs
 
-```{r}
-plot(Sepal.Length ~ Petal.Length, data = iris)
-```
-
-# Decsriptive Statistics Cont.
 
 - You can use the `knitr:kable` function to print nice HTML tables. Here is an example R code:
 
 ```{r}
-iris %>% group_by(Species) %>% summarise(Min = min(Petal.Length,na.rm = TRUE),
-                                           Q1 = quantile(Petal.Length,probs = .25,na.rm = TRUE),
-                                           Median = median(Petal.Length, na.rm = TRUE),
-                                           Q3 = quantile(Petal.Length,probs = .75,na.rm = TRUE),
-                                           Max = max(Petal.Length,na.rm = TRUE),
-                                           Mean = mean(Petal.Length, na.rm = TRUE),
-                                           SD = sd(Petal.Length, na.rm = TRUE),
-                                           n = n(),
-                                           Missing = sum(is.na(Petal.Length))) -> table1
+table1 <- table(pokedex_Update_05_20_$type_1, pokedex_Update_05_20_$status)
 knitr::kable(table1)
 ```
+```{r}
+table2 <- table(pokedex_Update_05_20_$type_1, pokedex_Update_05_20_$status) %>% prop.table(margin = 2)
+knitr::kable(table2)
+```
+
+
+
+# Decsriptive Statistics Cont.
+
+```{r}
+ggplot(pokedex_Update_05_20_) +
+  aes(x = type_1, fill = status) +
+  geom_bar(position = "fill") +
+  coord_flip() +
+  labs(title = "Proportion of Pokemon Status for each Pokemon Type", x = "Type", y = "Proportion")
+```
+The above barplot displays the proportion of Pokemon status for each Pokemon Type.
+- The Normal Pokemons make up the biggest proportion of all Pokemon Types.
+- Most Pokemon types have a small proportion of Legendary Pokemons, with the Dragon type having the largest proportion.
+- Most Pokemon types have a small proportion of Mythical Pokemons, with the Steel and Psychic type making the largest proportions.
+- Most Pokemon types have a small proportion of Sub Legendary Pokemons, with the Flying type having the largest proportion.
 
 
 # Hypothesis Testing
