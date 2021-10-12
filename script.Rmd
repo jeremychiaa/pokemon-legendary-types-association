@@ -1,7 +1,7 @@
 ---
-title: "Your Title Comes Here"
-subtitle: "Subtitle Comes Here"
-author: "Student(s) Names and Student ID's Come Here"
+title: "Pokemon Status and Type"
+subtitle: "Chi-Square Test of Association between variables Pokemon Status and Type"
+author: "Jeremy Jian Zhi Chia (s3917515)"
 date: "Last updated: `r format(Sys.time(), '%d %B, %Y')`"
 output:
   slidy_presentation:
@@ -41,7 +41,12 @@ library(knitr) # Useful for creating nice tables
 - The following link will help you with creating R Markdown Slidy Presentations
 - http://rmarkdown.rstudio.com/slidy_presentation_format.html
 - Don't forget about [Bootcamp 4](https://astral-theory-157510.appspot.com/secured/RBootcamp_Course_04.html)
-- A good introduction provides a brief background to the problem, defines important terms, and leads to a strong rationale. 
+- A good introduction provides a brief background to the problem, defines important terms, and leads to a strong rationale.
+
+- The purpose of this investigation is to investigate if there are any association between Pokemon Status and Pokemon Type.
+- Pokemon Status gives the status of any given Pokemon, namely Normal, Mythical, Sub-Legendary or Legendary
+- Each Pokemon has a type which determines its weaknesses/resistance to attacks. Some example types include Grass, Fire, Water, Psychic, Electric etc.
+
 
 # Introduction Cont.
 
@@ -51,11 +56,20 @@ library(knitr) # Useful for creating nice tables
 - Remember, you have a maximum of 20 slides to fit everything in.
 - Ensure each slide fits on one screen. The reader should not have to scroll down. 
 
+- As I grew up watching Pokemon, playing Pokemon video games and collecting Pokemon cards, I thought it would be fun and reminiscent to choose this dataset and be able to apply statistical tests on it to gain some insights!
+
 
 # Problem Statement
 
 - State the overall problem/question driving the investigation
 - Summarise how you will use statistics to solve the problem or answer your question.
+
+- As all Pokemon are associated with a status and type, I'd like to find out if there exists a relationship between the Status and Type.
+- Will knowing the Pokemon Type allow us to predict the Pokemon Status, or will knowing the Pokemon Status allow us to predict its Type?
+- Does any Pokemon Status make up of predominantly a certain Pokemon Type?
+- Does any particular Pokemon Type have a significant number of Legendary Pokemons?
+- The Chi-square Test of Association is used to test if there is a relationship between the two Status and Type.
+- This test will allow us to know if the Status and Type are independent/dependent on each other and whether knowing the values of Pokemon Status helps to predict the value of Pokemon Type and vice versa.
 
 # Data
 
@@ -65,6 +79,10 @@ library(knitr) # Useful for creating nice tables
 - Explain the sampling method if known
 - Ensure you reference the data source if you have used Open Data
 
+- Complete Pokemon Dataset (All 8 generations)
+- Source: https://www.kaggle.com/mariotormo/complete-pokemon-dataset-updated-090420
+- This dataset contains records of Pokemons across all eight generations.
+
 
 # Data Cont.
 
@@ -73,7 +91,21 @@ library(knitr) # Useful for creating nice tables
 - Explain the scale of numeric variables.
 - Justify everything that you do to preprocess the data.
 
+- This dataset contains rich information on each Pokemon, they include names in various languages, primary and secondary type, height and weight, special abilities, various battle metrics (Attack, Defense, Speed etc.), egg type, gender distribution and various attack damage against any Pokemon Type.
+- Variables of interest: Status and Type
+- The structure is inspected and Status and Type are set as unordered factors
+- Unique values of variables of interest are inspected to ensure there are no errors
+- Existence of null values are also checked
 
+```{r}
+# Check for NAs
+sum(is.na(pokedex_Update_05_20_$status))
+sum(is.na(pokedex_Update_05_20_$type_1))
+```
+```{r}
+pokedex_Update_05_20_$type_1 <- pokedex_Update_05_20_$type_1 %>% as.factor()
+pokedex_Update_05_20_ %>% str()
+```
 # Descriptive Statistics and Visualisation
 
 - Summarise the important variables in your investigation.
