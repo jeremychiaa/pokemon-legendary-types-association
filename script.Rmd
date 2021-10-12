@@ -24,6 +24,7 @@ knitr::opts_chunk$set(
 library(ggplot2) # Useful for creating plots
 library(dplyr)  # Useful for data maipulation
 library(knitr) # Useful for creating nice tables
+library(summarytools)
 
 ```
 
@@ -44,7 +45,8 @@ library(knitr) # Useful for creating nice tables
 - A good introduction provides a brief background to the problem, defines important terms, and leads to a strong rationale.
 
 - The purpose of this investigation is to investigate if there are any association between Pokemon Status and Pokemon Type.
-- Pokemon Status gives the status of any given Pokemon, namely Normal, Mythical, Sub-Legendary or Legendary
+- Pokemon Status gives the status of any given Pokemon, namely Normal, Mythical, Sub-Legendary or Legendary.
+- This investigation will primarily focus on the Pokemon status of Mythical, Sub-Legendary and Legendary and their associated types. The focus will be on Pokemon that are considered "rare".
 - Each Pokemon has a type which determines its weaknesses/resistance to attacks. Some example types include Grass, Fire, Water, Psychic, Electric etc.
 
 
@@ -57,6 +59,7 @@ library(knitr) # Useful for creating nice tables
 - Ensure each slide fits on one screen. The reader should not have to scroll down. 
 
 - As I grew up watching Pokemon, playing Pokemon video games and collecting Pokemon cards, I thought it would be fun and reminiscent to choose this dataset and be able to apply statistical tests on it to gain some insights!
+- It would also allow me to finally know with confidence whether a particular Pokemon type is more likely to be a rare Pokemon!
 
 
 # Problem Statement
@@ -64,12 +67,12 @@ library(knitr) # Useful for creating nice tables
 - State the overall problem/question driving the investigation
 - Summarise how you will use statistics to solve the problem or answer your question.
 
-- As all Pokemon are associated with a status and type, I'd like to find out if there exists a relationship between the Status and Type.
-- Will knowing the Pokemon Type allow us to predict the Pokemon Status, or will knowing the Pokemon Status allow us to predict its Type?
-- Does any Pokemon Status make up of predominantly a certain Pokemon Type?
-- Does any particular Pokemon Type have a significant number of Legendary Pokemons?
-- The Chi-square Test of Association is used to test if there is a relationship between the two Status and Type.
-- This test will allow us to know if the Status and Type are independent/dependent on each other and whether knowing the values of Pokemon Status helps to predict the value of Pokemon Type and vice versa.
+- As all Pokemon are associated with a status and type, I'd like to find out if there exists a relationship between the status and type.
+- Will knowing the Pokemon type allow us to predict the Pokemon status, or will knowing the Pokemon status allow us to predict its type?
+- Does any "rare" Pokemon make up of predominantly a certain Pokemon type?
+- Does any particular Pokemon type have a significant number of Legendary Pokemons?
+- The Chi-square Test of Association is used to test if there is a relationship between the Pokemon status and type.
+- This test will allow us to know if the status and type are independent/dependent on each other and whether knowing the values of Pokemon status helps to predict the value of Pokemon type and vice versa.
 
 # Data
 
@@ -91,21 +94,31 @@ library(knitr) # Useful for creating nice tables
 - Explain the scale of numeric variables.
 - Justify everything that you do to preprocess the data.
 
-- This dataset contains rich information on each Pokemon, they include names in various languages, primary and secondary type, height and weight, special abilities, various battle metrics (Attack, Defense, Speed etc.), egg type, gender distribution and various attack damage against any Pokemon Type.
+- This dataset contains rich information on each Pokemon, they include Pokemon names in various languages, primary and secondary type, height and weight, special abilities, various battle metrics (Attack, Defense, Speed etc.), egg type, gender distribution and various attack damage against any Pokemon Type.
 - Variables of interest: Status and Type
-- The structure is inspected and Status and Type are set as unordered factors
-- Unique values of variables of interest are inspected to ensure there are no errors
-- Existence of null values are also checked
+- Subsetting is applied to the dataset to exclude "Normal" Pokemon statuses.
+- The status and type variables are set as unordered factors.
+- Unique values of variables of interest are inspected to ensure there are no errors.
+- Existence of null values are also checked.
+
+```{r}
+pokedex_Update_05_20_ <- pokedex_Update_05_20_ %>% subset(status != "Normal")
+```
+
+
+```{r}
+pokedex_Update_05_20_$status <- pokedex_Update_05_20_$status %>% as.factor()
+pokedex_Update_05_20_$type_1 <- pokedex_Update_05_20_$type_1 %>% as.factor()
+pokedex_Update_05_20_ %>% str()
+```
 
 ```{r}
 # Check for NAs
 sum(is.na(pokedex_Update_05_20_$status))
 sum(is.na(pokedex_Update_05_20_$type_1))
 ```
-```{r}
-pokedex_Update_05_20_$type_1 <- pokedex_Update_05_20_$type_1 %>% as.factor()
-pokedex_Update_05_20_ %>% str()
-```
+
+
 # Descriptive Statistics and Visualisation
 
 - Summarise the important variables in your investigation.
@@ -136,12 +149,7 @@ ggplot(pokedex_Update_05_20_) +
   coord_flip() +
   labs(title = "Proportion of Pokemon Status for each Pokemon Type", x = "Type", y = "Proportion")
 ```
-The above barplot displays the proportion of Pokemon status for each Pokemon Type.
-- The Normal Pokemons make up the biggest proportion of all Pokemon Types.
-- Most Pokemon types have a small proportion of Legendary Pokemons, with the Dragon type having the largest proportion.
-- Most Pokemon types have a small proportion of Mythical Pokemons, with the Steel and Psychic type making the largest proportions.
-- Most Pokemon types have a small proportion of Sub Legendary Pokemons, with the Flying type having the largest proportion.
-
+The above barplot displays the proportion of Pokemon status for each Pokemon Type. The barplot gives an indication as to whether there is an association between the Pokemon type and status. If there was no association between Pokemon type and status, the proportions within the bars of each Pokemon type would be identical. However, the barplot above suggests the possibility of an association between the variables.
 
 # Hypothesis Testing
 
@@ -151,9 +159,18 @@ The above barplot displays the proportion of Pokemon status for each Pokemon Typ
 - Here is an example:
 
 ```{r}
-model1 <- lm(Sepal.Length ~ Petal.Length, data = iris)
-model1 %>% summary()
+# Running chi-square test on variables
+pokemon_chi <- chisq.test(table(pokedex_Update_05_20_$type_1, pokedex_Update_05_20_$status))
+pokemon_chi
 ```
+
+
+```{r}
+# View expected values
+pokemon_chi$expected
+```
+
+
 
 # Hypthesis Testing Cont.
 
