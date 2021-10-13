@@ -1,14 +1,16 @@
 ---
 title: "Pokemon Status and Type"
-subtitle: "Chi-Square Test of Association between variables Pokemon Status and Type"
 author: "Jeremy Jian Zhi Chia (s3917515)"
-date: "Last updated: `r format(Sys.time(), '%d %B, %Y')`"
+date: 'Last updated:' `r format(Sys.time(), ''%d %B, %Y'')`
 output:
   slidy_presentation:
     font_adjustment: 0
     highlight: haddock
-    mathjax: "default"
+    mathjax: default
     df_print: paged
+  ioslides_presentation:
+    highlight: haddock
+subtitle: Chi-Square Test of Association between variables Pokemon Status and Type
 ---
 
 ```{r setup, include=FALSE}
@@ -39,11 +41,6 @@ library(summarytools)
 
 # Introduction
 
-- The following link will help you with creating R Markdown Slidy Presentations
-- http://rmarkdown.rstudio.com/slidy_presentation_format.html
-- Don't forget about [Bootcamp 4](https://astral-theory-157510.appspot.com/secured/RBootcamp_Course_04.html)
-- A good introduction provides a brief background to the problem, defines important terms, and leads to a strong rationale.
-
 - The purpose of this investigation is to investigate if there are any association between Pokemon Status and Pokemon Type.
 - Pokemon Status gives the status of any given Pokemon, namely Normal, Mythical, Sub-Legendary or Legendary.
 - This investigation will focus on the Pokemon statuses of Normal, Mythical, Sub-Legendary and Legendary and their associated types. Emphasis will be on Pokemon that are considered "rare" and "common".
@@ -52,20 +49,11 @@ library(summarytools)
 
 # Introduction Cont.
 
-- Keep everything short and straight to the point. 
-- Use bullet points to help minimise text.
-- Add relevant images to make your presentation more appealing
-- Remember, you have a maximum of 20 slides to fit everything in.
-- Ensure each slide fits on one screen. The reader should not have to scroll down. 
-
 - As I grew up watching Pokemon, playing Pokemon video games and collecting Pokemon cards, I thought it would be fun and reminiscent to choose this dataset and be able to apply statistical tests on it to gain some insights!
 - It would also allow me to finally know with confidence whether a particular Pokemon type is more likely to be a rare Pokemon!
 
 
 # Problem Statement
-
-- State the overall problem/question driving the investigation
-- Summarise how you will use statistics to solve the problem or answer your question.
 
 - As all Pokemon are associated with a status and type, I'd like to find out if there exists a relationship between the status and type.
 - Will knowing the Pokemon type allow us to predict the Pokemon status, or will knowing the Pokemon status allow us to predict its type?
@@ -76,23 +64,12 @@ library(summarytools)
 
 # Data
 
-- You can use multiple slides to break up your sections. 
-- Explain how you collected your data.
-- There should be enough detail here so that someone else could replicate your data collection.
-- Explain the sampling method if known
-- Ensure you reference the data source if you have used Open Data
-
 - Complete Pokemon Dataset (All 8 generations)
 - Source: https://www.kaggle.com/mariotormo/complete-pokemon-dataset-updated-090420
 - This dataset contains records of Pokemons across all eight generations.
 
 
 # Data Cont.
-
-- List and explain the important variables. 
-- If you have factors, explain each level.
-- Explain the scale of numeric variables.
-- Justify everything that you do to preprocess the data.
 
 - This dataset contains rich information on each Pokemon, they include Pokemon names in various languages, primary and secondary type, height and weight, special abilities, various battle metrics (Attack, Defense, Speed etc.), egg type, gender distribution and various attack damage against any Pokemon Type.
 - Variables of interest: Status and Type
@@ -128,14 +105,6 @@ sum(is.na(pokedex_Update_05_20_$type_1))
 
 # Descriptive Statistics and Visualisation
 
-- Summarise the important variables in your investigation.
-- Use visualisation to highlight interesting features of the data and tell the overall story.
-- Explain how you dealt with data issues (if any), e.g. missing data and outliers.
-- Here are the examples of R chunks and outputs
-
-
-- You can use the `knitr:kable` function to print nice HTML tables. Here is an example R code:
-
 ```{r}
 table1 <- table(pokedex_Update_05_20_$type_1, pokedex_Update_05_20_$status)
 knitr::kable(table1)
@@ -144,7 +113,6 @@ knitr::kable(table1)
 table2 <- table(pokedex_Update_05_20_$type_1, pokedex_Update_05_20_$status) %>% prop.table(margin = 2)
 knitr::kable(table2)
 ```
-
 
 # Decsriptive Statistics Cont.
 
@@ -159,11 +127,6 @@ The above barplot displays the proportion of Pokemon status for each Pokemon Typ
 The barplot gives an indication as to whether there is an association between the Pokemon type and status. If there was no association between Pokemon type and status, the proportions within the bars of each Pokemon type would be identical. However, the barplot above suggests the possibility of an association between the variables.
 
 # Hypothesis Testing
-
-- Apply an appropriate hypothesis test for your investigation. 
-- Ensure you state and check any assumptions. 
-- Report the appropriate values and interpret the results.
-- Here is an example:
 
 ```{r}
 # Running chi-square test on variables
@@ -199,13 +162,9 @@ The reported p-value is 7.062e-12, which is less than the 0.05 significance leve
 
 - Here are the examples of mathematical equations:
 
-$$H_0: \mu_1 = \mu_2 $$
+$$H_0: There\ is\ no\ association\ in\ the\ population\ between\ the\ categorical\ variables\ (independence) $$
 
-$$H_A: \mu_1 \ne \mu_2$$
-
-$$S = \sum^n_{i = 1}d^2_i$$
-
-- You can also place equations inline: $z = \frac{x - \mu}{\sigma}$
+$$H_A: There\ is\ an\ association\ in\ the\ population\ between\ the\ categorical\ variables\ (dependence) $$
 
 ```{r}
 pokemon_fisher <- fisher.test(table(pokedex_Update_05_20_$type_1, pokedex_Update_05_20_$status), simulate.p.value = T, hybrid = T)
@@ -214,13 +173,6 @@ pokemon_fisher$p.value
 
 
 # Discussion
-
-- Discuss the major findings of your investigation
-- Discuss any strengths and limitations. 
-- Propose directions for future investigations. 
-- This is a good place to re-state your findings as a final conclusion. What is the one take home message the reader should leave with?
-- Your final conclusion needs to be very clear.
-
 
 ## Major Findings
 
@@ -261,3 +213,10 @@ The Chi-Squared Test and Fisher's Exact Test of Association were used to test if
 # References
 
 - Provide a list of any references you use in the presentation. 
+
+- https://statsandr.com/blog/chi-square-test-of-independence-in-r/#conclusion-and-interpretation
+- https://statsandr.com/blog/fisher-s-exact-test-in-r-independence-test-for-a-small-sample/
+- http://www.sthda.com/english/wiki/chi-square-test-of-independence-in-r
+- http://www.biostathandbook.com/fishers.html
+- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5426219/
+- http://www.biostathandbook.com/gtestind.html
