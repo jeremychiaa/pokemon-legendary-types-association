@@ -209,7 +209,7 @@ $$S = \sum^n_{i = 1}d^2_i$$
 
 ```{r}
 pokemon_fisher <- fisher.test(table(pokedex_Update_05_20_$type_1, pokedex_Update_05_20_$status), simulate.p.value = T, hybrid = T)
-pokemon_fisher
+pokemon_fisher$p.value
 ```
 
 
@@ -220,6 +220,43 @@ pokemon_fisher
 - Propose directions for future investigations. 
 - This is a good place to re-state your findings as a final conclusion. What is the one take home message the reader should leave with?
 - Your final conclusion needs to be very clear.
+
+
+## Major Findings
+
+### Chi-Squared Test
+
+- There are two approaches used to test the null hypothesis within the Chi-squared test. First was the critical value approach and second is the p-value approach.
+- The reported X-squared of Pokemon status and type is 89.652 and the reported critical value was found to be 27.587. As X-squared is higher than the critical value, 89.652 > 27.587, the null hypothesis is rejected.
+- The reported p-value was found to be 7.061857e-12 which is less than the significance level of 0.05. Hence, the null hypothesis is rejected with this approach.
+
+### Fisher's Exact Test
+
+- The Fisher's Exact Test is used over the Chi-Squared Test when there exists over 20% of cells with expected frequencies of less than 5.
+- As the Chi-Squared Test applies approximations, the Fisher's Exact Test is an exact test.
+- The reported p-value using this test was 0.000499 which is also below the significance level of 0.05. Therefore, similar to the Chi-Squared Test, the null hypothesis is rejected.
+
+
+## Strengths and Limitations
+
+### Strengths
+
+- The initial Pokemon statuses contained 4 levels, namely "Normal", "Legendary", "Mythical" and "Sub Legendary". However, the levels were combined to increase the number of observations within each subgroup of "Common" and "Rare".
+- The gathering of subgroups was still done in a meaningful way. The Chi-Squared Test was able to provide a more accurate result without compromising the insights that can be gained. We can still determine if a particular Pokemon type is considered "Common" or "Rare".
+- As this sample size is small and there existed expected frequencies that are below 5, the Fisher's Exact Test was able to provide an accurate result of the p-value.
+
+### Limitations
+
+- Even though gathering these observations increased the accuracy of the Chi-Squared Test, the insights gained were limited to only knowing whether a Pokemon particular Pokemon is "Common" or "Rare".
+- As a result, we are not able to see into finer granularity as to whether Pokemon type was associated with one of the four statuses.
+
+## Considerations for Future Investigations
+
+- If there are more generations of Pokemons to come, this will result in a larger sample size. Instead of using a Chi-Squared Test or Fisher's Exact Test, a G-Test of Independence can be used to find any associations between Pokemon status and type.
+- As this dataset is comprehensive, there are many more analyses that can be conducted. One interesting one would be to use an ANOVA (Analysis of Variance) to test whether a particular Pokemon type have equal heights.
+
+## Final Conclusion
+The Chi-Squared Test and Fisher's Exact Test of Association were used to test if the association between Pokemon status and type are statistically significant. The results from both tests showed that there exists a significant relationship between the Pokemon status and type. Therefore, the results suggest that some Pokemon types are more likely to be "Rare" Pokemons. Hence, knowing the value of one variable helps predict the value of the other variable.
 
 # References
 
