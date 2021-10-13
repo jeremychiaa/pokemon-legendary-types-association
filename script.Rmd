@@ -46,7 +46,7 @@ library(summarytools)
 
 - The purpose of this investigation is to investigate if there are any association between Pokemon Status and Pokemon Type.
 - Pokemon Status gives the status of any given Pokemon, namely Normal, Mythical, Sub-Legendary or Legendary.
-- This investigation will primarily focus on the Pokemon status of Mythical, Sub-Legendary and Legendary and their associated types. The focus will be on Pokemon that are considered "rare".
+- This investigation will focus on the Pokemon statuses of Normal, Mythical, Sub-Legendary and Legendary and their associated types. Emphasis will be on Pokemon that are considered "rare" and "common".
 - Each Pokemon has a type which determines its weaknesses/resistance to attacks. Some example types include Grass, Fire, Water, Psychic, Electric etc.
 
 
@@ -96,13 +96,20 @@ library(summarytools)
 
 - This dataset contains rich information on each Pokemon, they include Pokemon names in various languages, primary and secondary type, height and weight, special abilities, various battle metrics (Attack, Defense, Speed etc.), egg type, gender distribution and various attack damage against any Pokemon Type.
 - Variables of interest: Status and Type
-- Subsetting is applied to the dataset to exclude "Normal" Pokemon statuses.
-- The status and type variables are set as unordered factors.
-- Unique values of variables of interest are inspected to ensure there are no errors.
-- Existence of null values are also checked.
+- Values of the status variable were conditionally exchanged. With "Normal" Pokemons being classified as "Common" and "Legendary", "Mythical" and "Sub Legendary" Pokemons being classified as "Rare".
+- The status and type variables were set as unordered factors.
+- Unique values of variables of interest were inspected to ensure there are no errors.
+- Existence of null values were also checked.
 
 ```{r}
-pokedex_Update_05_20_ <- pokedex_Update_05_20_ %>% subset(status != "Normal")
+# Categorising common and rare pokemons
+rare_pokemons <- c("Legendary", "Mythical", "Sub Legendary")
+
+for (i in rare_pokemons) {
+  pokedex_Update_05_20_$status[pokedex_Update_05_20_$status == i] <- "Rare"
+}
+
+pokedex_Update_05_20_$status[pokedex_Update_05_20_$status == "Normal"] <- "Common"
 ```
 
 
@@ -139,7 +146,6 @@ knitr::kable(table2)
 ```
 
 
-
 # Decsriptive Statistics Cont.
 
 ```{r}
@@ -149,7 +155,8 @@ ggplot(pokedex_Update_05_20_) +
   coord_flip() +
   labs(title = "Proportion of Pokemon Status for each Pokemon Type", x = "Type", y = "Proportion")
 ```
-The above barplot displays the proportion of Pokemon status for each Pokemon Type. The barplot gives an indication as to whether there is an association between the Pokemon type and status. If there was no association between Pokemon type and status, the proportions within the bars of each Pokemon type would be identical. However, the barplot above suggests the possibility of an association between the variables.
+The above barplot displays the proportion of Pokemon status for each Pokemon Type. By observation, all Pokemon types are predominantly made up of "Common" Pokemons. With certain Pokemon types making up a larger proportion of "Rare" Pokemons.
+The barplot gives an indication as to whether there is an association between the Pokemon type and status. If there was no association between Pokemon type and status, the proportions within the bars of each Pokemon type would be identical. However, the barplot above suggests the possibility of an association between the variables.
 
 # Hypothesis Testing
 
@@ -169,10 +176,26 @@ pokemon_chi
 # View expected values
 pokemon_chi$expected
 ```
+Although the assumption of the Chi-squared test is that at least 75% of the expected value in each cell is greater than 5, there is evidently a clear majority of expected counts over 5. There are also many expected values less than 5 that sit close to the value 5. Therefore, the Chi-squared test will still be used to test for any association between Pokemon status and type.
 
 
-
+```{r}
+# Calculate degrees of freedom
+dof <- (18-1)*(2-1)
+dof
+```
+```{r}
+# Calculate one-tailed critical value
+qchisq(p = .95, df = 17)
+```
+The critical value was calculated as 27.59. As 89.65 > 27.59, the null hypothesis is rejected.
 # Hypthesis Testing Cont.
+
+```{r}
+# Calculate P value
+pchisq(q = 89.652, df = 17, lower.tail = F)
+```
+The reported p-value is 7.062e-12, which is less than the 0.05 significance level. Therefore, the null hypothesis is also rejected using the p-value approach.
 
 - Here are the examples of mathematical equations:
 
@@ -183,6 +206,12 @@ $$H_A: \mu_1 \ne \mu_2$$
 $$S = \sum^n_{i = 1}d^2_i$$
 
 - You can also place equations inline: $z = \frac{x - \mu}{\sigma}$
+
+```{r}
+pokemon_fisher <- fisher.test(table(pokedex_Update_05_20_$type_1, pokedex_Update_05_20_$status), simulate.p.value = T, hybrid = T)
+pokemon_fisher
+```
+
 
 # Discussion
 
