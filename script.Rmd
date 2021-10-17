@@ -1,10 +1,10 @@
 ---
-title: "Pokemon Status and Type"
+title: "Pokemons!"
 author: "Jeremy Jian Zhi Chia (s3917515)"
 date: "Last updated: `r format(Sys.time(), '%d %B, %Y')`"
 output:
   slidy_presentation:
-    font_adjustment: 0
+    font_adjustment: -1
     highlight: haddock
     mathjax: default
     df_print: paged
@@ -12,7 +12,7 @@ output:
     highlight: haddock
   beamer_presentation:
     highlight: haddock
-subtitle: Tests of Association between variables Pokemon Status and Type
+subtitle: "Tests of Association between Pokemon Status and Type"
 ---
 
 ```{r setup, include=FALSE}
@@ -31,16 +31,11 @@ library(knitr) # Useful for creating nice tables
 library(summarytools)
 library(readr)
 library(tinytex)
+library(kableExtra)
 ```
 
-
 # RPubs link information
-
-- You must publish your presentation to RPubs (see [here](https://astral-theory-157510.appspot.com/secured/RBootcamp_Course_04.html#creating_an_r_markdown_document_in_r_studio)) and add this link to your presentation here.
-
-- Rpubs link comes here: www.........
-
-- This online version of the presentation will be used for marking. Failure to add your link will delay your feedback and risk late penalties.
+- RPubs Link: https://rpubs.com/jeremychia/822885
 
 # Introduction
 
@@ -50,15 +45,17 @@ library(tinytex)
 - Each Pokemon has a type which determines its weaknesses/resistance to attacks. Some example types include Grass, Fire, Water, Psychic, Electric etc.
 
 
-# Introduction Cont.
+# Why did I choose this investigation?
 
 - As I grew up watching Pokemon, playing Pokemon video games and collecting Pokemon cards, I thought it would be fun and reminiscent to choose this dataset and be able to apply statistical tests on it to gain some insights!
 - It would also allow me to finally know with confidence whether a particular Pokemon type is more likely to be a rare Pokemon!
-
+```{r, echo=FALSE}
+knitr::include_graphics("./577.jpg")
+```
 
 # Problem Statement
 
-- As all Pokemon are associated with a status and type, I'd like to find out if there exists a relationship between the status and type.
+- As all Pokemons are associated with a status and type, I'd like to find out if there exists a relationship between the status and type.
 - Will knowing the Pokemon type allow us to predict the Pokemon status, or will knowing the Pokemon status allow us to predict its type?
 - Does any "rare" Pokemon make up of predominantly a certain Pokemon type?
 - Does any particular Pokemon type have a significant number of Legendary Pokemons?
@@ -70,9 +67,6 @@ library(tinytex)
 - Complete Pokemon Dataset (All 8 generations)
 - Source: https://www.kaggle.com/mariotormo/complete-pokemon-dataset-updated-090420
 - This dataset contains records of Pokemons across all eight generations.
-
-# Data Cont.
-
 - This dataset contains rich information on each Pokemon, they include Pokemon names in various languages, primary and secondary type, height and weight, special abilities, various battle metrics (Attack, Defense, Speed etc.), egg type, gender distribution and various attack damage against any Pokemon Type.
 - Variables of interest:
     + Status
@@ -118,12 +112,6 @@ knitr::kable(table1, caption = "Observed Counts")
 ```
 Above table displays the observed counts of "Common" and "Rare" Pokemon statuses for each Pokemon type.
 
----
-```{r echo=TRUE}
-table2 <- table(pokedex_Update_05_20_$type_1, pokedex_Update_05_20_$status) %>% prop.table(margin = 2)
-knitr::kable(table2, caption = "Proportion of Observed Counts")
-```
-Above table displays the observed proportions of "Common" and "Rare" Pokemon statuses for each Pokemon type.
 
 # Visualisation of Pokemon Status and Pokemon Type by Proportion
 
@@ -137,7 +125,12 @@ ggplot(pokedex_Update_05_20_) +
 The barplot displays the proportion of Pokemon status for each Pokemon Type. By observation, all Pokemon types are predominantly made up of "Common" Pokemons. With certain Pokemon types making up a larger proportion of "Rare" Pokemons.
 The barplot gives an indication as to whether there is an association between the Pokemon type and status. If there was no association between Pokemon type and status, the proportions within the bars of each Pokemon type would be identical. However, the barplot above suggests the possibility of an association between the variables.
 
-# Hypothesis Testing
+
+# The Statistical Hypotheses for the Chi-square Test of Association
+$$H_0: There\ is\ no\ association\ in\ the\ population\ between\ Pokemon\ status\ and\ type \ (independence) $$
+$$H_A: There\ is\ an\ association\ in\ the\ population\ between\ Pokemon\ status\ and\ type \ (dependence) $$
+
+## Chi Square Test
 
 ```{r echo=TRUE}
 # Running chi-square test on variables
@@ -145,72 +138,80 @@ pokemon_chi <- chisq.test(table(pokedex_Update_05_20_$type_1, pokedex_Update_05_
 pokemon_chi
 ```
 The Chi-Squared Test reported an X-squared of 89.652, degrees of freedom of 17 and a p-value of 7.063e-12.
----
+
+
+# Expected Count using Chi-Square Test
+
 ```{r echo=TRUE}
 # View expected values
 knitr::kable(pokemon_chi$expected, caption = "Expected Counts")
 ```
 Although the assumption of the Chi-squared test is that at least 75% of the expected value in each cell is greater than 5, there is evidently a clear majority of expected counts over 5. There are also many expected values less than 5 that sit close to the value 5. Therefore, the Chi-squared test will still be used to test for any association between Pokemon status and type.
 
----
+
+# Chi Square Test cont.
+
+## Critical Value Approach
 ```{r echo=TRUE}
 # Calculate one-tailed critical value
 qchisq(p = .95, df = 17)
 ```
 The critical value was calculated as 27.59. As 89.65 > 27.59, the null hypothesis is rejected.
 
-# Hypthesis Testing Cont.
-
+## P-Value Approach
 ```{r echo=TRUE}
 # Calculate P value
 pchisq(q = 89.652, df = 17, lower.tail = F)
 ```
 The reported p-value is 7.062e-12, which is less than the 0.05 significance level. Therefore, the null hypothesis is also rejected using the p-value approach.
 
+
+# Alternative Approach - Fisher's Exact Test
 ```{r echo=TRUE}
 # Calculate p-value using Fisher's Test
 pokemon_fisher <- fisher.test(table(pokedex_Update_05_20_$type_1, pokedex_Update_05_20_$status), simulate.p.value = T, hybrid = T)
 pokemon_fisher$p.value
 ```
+The reported p-value is 0.0004998, which is less than the 0.05 significance level. Therefore, the null hypothesis is also rejected using the Fisher's Exact Test.
 
-# The Statistical Hypotheses for the Chi-square Test of Association
+# Major Findings
 
-$$H_0: There\ is\ no\ association\ in\ the\ population\ between\ the\ categorical\ variables\ (independence) $$
-
-$$H_A: There\ is\ an\ association\ in\ the\ population\ between\ the\ categorical\ variables\ (dependence) $$
-
-# Discussion
-
-## Major Findings
-
-### Chi-Squared Test
+## Chi-Squared Test
 
 - There are two approaches used to test the null hypothesis within the Chi-squared test. First was the critical value approach and second is the p-value approach.
 - The reported X-squared of Pokemon status and type is 89.652 and the reported critical value was found to be 27.587. As X-squared is higher than the critical value, 89.652 > 27.587, the null hypothesis is rejected.
 - The reported p-value was found to be 7.061857e-12 which is less than the significance level of 0.05. Hence, the null hypothesis is rejected with this approach.
 
-### Fisher's Exact Test
+## Fisher's Exact Test
 
 - The Fisher's Exact Test is used over the Chi-Squared Test when there exists over 20% of cells with expected frequencies of less than 5.
 - As the Chi-Squared Test applies approximations, the Fisher's Exact Test is an exact test.
 - The reported p-value using this test was 0.000499 which is also below the significance level of 0.05. Therefore, similar to the Chi-Squared Test, the null hypothesis is rejected.
 
+# Strengths and Limitations of Investigation
 
-# Strengths of Investigation
+## Strengths of Investigation
 - The initial Pokemon statuses contained 4 levels, namely "Normal", "Legendary", "Mythical" and "Sub Legendary". However, the levels were combined to increase the number of observations within each subgroup of "Common" and "Rare".
 - The gathering of subgroups was still done in a meaningful way. The Chi-Squared Test was able to provide a more accurate result without compromising the insights that can be gained. We can still determine if a particular Pokemon type is considered "Common" or "Rare".
 - As this sample size is small and there existed expected frequencies that are below 5, the Fisher's Exact Test was able to provide an accurate result of the p-value.
 
-# Limitations of Investigation
+## Limitations of Investigation
 - Even though gathering these observations increased the accuracy of the Chi-Squared Test, the insights gained were limited to only knowing whether a Pokemon particular Pokemon is "Common" or "Rare".
 - As a result, we are not able to see into finer granularity as to whether Pokemon type was associated with one of the four statuses.
+
 
 # Considerations for Future Investigations
 - If there are more generations of Pokemons to come, this will result in a larger sample size. Instead of using a Chi-Squared Test or Fisher's Exact Test, a G-Test of Independence can be used to find any associations between Pokemon status and type.
 - As this dataset is comprehensive, there are many more analyses that can be conducted. One interesting one would be to use an ANOVA (Analysis of Variance) to test whether a particular Pokemon type have equal heights.
 
+
 # Final Conclusion
 The Chi-Squared Test and Fisher's Exact Test of Association were used to test if the association between Pokemon status and type are statistically significant. The results from both tests showed that there exists a significant relationship between the Pokemon status and type. Therefore, the results suggest that some Pokemon types are more likely to be "Rare" Pokemons. Hence, knowing the value of one variable helps predict the value of the other variable.
+
+```{r, echo=FALSE}
+knitr::include_graphics("./Pokémon_Pikachu_art.png")
+
+```
 
 # References
 - Endod, R. D., 2017. Statistical notes for clinical researchers: Chi-squared test and Fisher's exact test. [Online] 
